@@ -1,6 +1,6 @@
 # server.py
 import logging
-from fastmcp import FastMCP          # <-- only import changed
+from fastmcp import FastMCP
 import httpx
 
 logging.basicConfig(
@@ -12,7 +12,7 @@ logger = logging.getLogger("weather-server-by-ganesh")
 logging.getLogger("mcp").setLevel(logging.DEBUG)
 logging.getLogger("mcp.server").setLevel(logging.DEBUG)
 
-mcp = FastMCP("weather-server", stateless_http=True)
+mcp = FastMCP("weather-server")   # <-- stateless_http removed from here
 
 @mcp.tool()
 async def get_weather(city: str) -> str:
@@ -45,6 +45,5 @@ async def get_weather(city: str) -> str:
         raise
 
 if __name__ == "__main__":
-    # Local-only: Horizon ignores this block and runs `mcp` itself.
     logger.info("Starting MCP server on http://127.0.0.1:8000/mcp (transport=streamable-http)")
-    mcp.run(transport="streamable-http")
+    mcp.run(transport="streamable-http", stateless_http=True)  # <-- moved here
